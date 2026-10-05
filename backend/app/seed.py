@@ -8,6 +8,9 @@ def init_db():
       id INTEGER PRIMARY KEY AUTOINCREMENT, item_id INT, qty_in REAL, qty_remain REAL,
       expiry TEXT, status TEXT, data_quality TEXT
     );
+    CREATE TABLE IF NOT EXISTS staged_lots(
+      id INTEGER PRIMARY KEY AUTOINCREMENT, item_id INT, qty REAL, expiry TEXT, created_at TEXT
+    );
     CREATE TABLE IF NOT EXISTS consumptions(id INTEGER PRIMARY KEY AUTOINCREMENT, note TEXT, result_json TEXT, created_at TEXT);
     CREATE TABLE IF NOT EXISTS settings(key TEXT PRIMARY KEY, value TEXT);
     """)

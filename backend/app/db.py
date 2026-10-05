@@ -7,6 +7,9 @@ def db_path() -> Path:
     return d / "pantryfifo.db"
 
 def connect():
-    c = sqlite3.connect(db_path())
+    # isolation_level=None：自动提交模式，写路径自行发出
+    # BEGIN IMMEDIATE/COMMIT，使「确认落层 / 消费 / 下架」串行化，
+    # 杜绝半上架与幽灵批。
+    c = sqlite3.connect(db_path(), isolation_level=None)
     c.row_factory = sqlite3.Row
     return c
