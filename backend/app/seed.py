@@ -1,4 +1,5 @@
 from app.db import connect
+from app.modules import temp_zone
 
 def init_db():
     c = connect()
@@ -11,6 +12,7 @@ def init_db():
     CREATE TABLE IF NOT EXISTS consumptions(id INTEGER PRIMARY KEY AUTOINCREMENT, note TEXT, result_json TEXT, created_at TEXT);
     CREATE TABLE IF NOT EXISTS settings(key TEXT PRIMARY KEY, value TEXT);
     """)
+    temp_zone.ensure_table(c)
     if c.execute("SELECT COUNT(*) c FROM items").fetchone()["c"] == 0:
         c.executemany("INSERT INTO items(name,layer,unit) VALUES (?,?,?)", [
             ("牛奶", "upper", "盒"), ("鸡蛋", "mid", "个"), ("冻饺", "lower", "袋"),
@@ -26,5 +28,6 @@ def init_db():
             ],
         )
         c.execute("INSERT INTO settings(key,value) VALUES ('warn_days','3')")
-        c.commit()
+    # 只建表、只在空库时播种; 绝不动既有 lots(种子 dirty 批保持 dirty)。
+    c.commit()
     c.close()

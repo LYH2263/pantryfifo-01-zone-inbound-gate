@@ -17,8 +17,13 @@
   </div>
 </template>
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, watch, onMounted } from 'vue'
+import { useRoute } from 'vue-router'
 import { api } from './api'
 const alerts = ref([])
-onMounted(async () => { try { alerts.value = await api('/alerts') } catch { alerts.value = [] } })
+const route = useRoute()
+async function load() { try { alerts.value = await api('/alerts') } catch { alerts.value = [] } }
+// 落层/消费/下架后切换页面时刷新顶条,与下架扫描、消费资格保持同一世界。
+watch(() => route.fullPath, load)
+onMounted(load)
 </script>
